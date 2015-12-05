@@ -7,7 +7,8 @@ import fetch from 'isomorphic-fetch';
 import {requestChats,recieveChats,sampleAction} from './actions';
 import {API_UPDATE_MASKS, API_UPDATE_DISTINCT, API_INIT_STORE, API_UPDATE_FILE, API_UPDATE_FILES, API_UPDATE_NULLCOUNT, API_ADD_FILE, API_UPDATE_FREQ } from './asyncTypes';
 
-let baseUrl = 'http://localhost:8080/';
+//let baseUrl = 'http://localhost:8080/';
+let baseUrl = location.origin+"/";
 
 export function updateFile(payload) {
 	return {

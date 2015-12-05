@@ -3,6 +3,24 @@
 var express = require('express');
 var fs      = require('fs');
 
+var bodyParser = require('body-parser');
+
+var MongoClient = require('mongodb').MongoClient;
+var assert = require('assert');
+var ObjectId = require('mongodb').ObjectID;
+//var url = 'mongodb://localhost:27017/test';
+// default to a 'localhost' configuration:
+var url = 'mongodb://localhost:27017/test';
+// if OPENSHIFT env variables are present, use the available connection info:
+if(process.env.OPENSHIFT_MONGODB_DB_PASSWORD){
+  url = process.env.OPENSHIFT_MONGODB_DB_USERNAME + ":" +
+  process.env.OPENSHIFT_MONGODB_DB_PASSWORD + "@" +
+  process.env.OPENSHIFT_MONGODB_DB_HOST + ':' +
+  process.env.OPENSHIFT_MONGODB_DB_PORT + '/' +
+  process.env.OPENSHIFT_APP_NAME;
+}
+
+
 
 /**
  *  Define the sample application.
@@ -95,15 +113,7 @@ var SampleApp = function() {
     self.createRoutes = function() {
         self.routes = { };
 
-        self.routes['/asciimo'] = function(req, res) {
-            var link = "http://i.imgur.com/kmbjB.png";
-            res.send("<html><body><img src='" + link + "'></body></html>");
-        };
-
-        self.routes['/'] = function(req, res) {
-            res.setHeader('Content-Type', 'text/html');
-            res.send(self.cache_get('index.html') );
-        };
+        
     };
 
 
@@ -113,7 +123,21 @@ var SampleApp = function() {
      */
     self.initializeServer = function() {
         self.createRoutes();
-        self.app = express.createServer();
+        self.app = express();
+
+        self.app.use(bodyParser());
+        self.app.get("/files", function(req, resp) {
+          findAll(function(files) {
+            resp.json(files);
+            resp.end();
+          });
+        });
+
+        self.app.post("/file", function(req, resp) {
+          saveFile(req.body, function(result){resp.end();});
+        });
+
+        self.app.use(express.static(__dirname+'/'));
 
         //  Add handlers for the app (from the routes).
         for (var r in self.routes) {
@@ -148,6 +172,35 @@ var SampleApp = function() {
 
 };   /*  Sample Application.  */
 
+
+function saveFile(fileData, callback) {
+  MongoClient.connect(url, function(err, db) {
+    assert.equal(null, err);
+        db.collection('files').insertOne(fileData, function(err, result) {
+          assert.equal(err, null);
+          console.log("Inserted");
+          db.close();
+          callback(result);
+      });
+    
+  });
+}
+
+function findAll(callback) {
+  MongoClient.connect(url, function(err, db) {
+  var flz = [];
+  var cursor =db.collection('files').find( );
+   cursor.each(function(err, doc) {
+      assert.equal(err, null);
+      if (doc != null) {
+        flz.push(doc);
+      } else {
+          db.close();
+         callback(flz);
+      }
+   });
+  });
+}
 
 
 /**

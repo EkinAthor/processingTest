@@ -139,7 +139,7 @@ export class DataStatistics {
 
     // "what?" version ... http://jsperf.com/diacritics/12
    removeDiacritics (str) {
-        return str.replace(/[^\u0000-\u007E]/g, function(a){ 
+        return str.replace(/[^\u0000-\u007E]/g,a=>{ 
            return this.diacriticsMap[a] || a; 
         });
     }

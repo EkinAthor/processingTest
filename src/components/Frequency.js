@@ -42,7 +42,12 @@ class FreqChart {
 		this.svg = d3.select(el).select("svg");	
 		this.table = table;
 		if(data) {
-
+			data = data.map(val=>{
+				if(val.label == null || val.label == "") {
+					val.label='NULL';
+				}
+				return val;
+			});
 		} else {
 		  data = [
 		      {label: "John Shepard",

@@ -6,7 +6,9 @@ export default class Frequency extends Component {
 		return (
 				<div>
 					<div className='freqChart' ref='chart'></div>
-					<div className='freqTable' ref='table'></div>
+					<div className='freqTablex' >
+						<table ref='table' className='freqTable frequencyTable'></table>
+					</div>
 				</div>
 			);
 	}

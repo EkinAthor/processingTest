@@ -2,10 +2,10 @@ span.duplicate {
 	color: #7a46a8;
 }
 span.unique {
-	color:#a6d275;
+	color:#99BF6D;
 }
 span.nonUnique {
-	color:  #ddd;
+	color: #A7A7A6;
 }
 body { padding-top: 30px; }
 .noMargin {
@@ -54,7 +54,7 @@ div.fileName {
 	margin:auto;
 }
 .frequencyTable  {
-	width:100%;
+	width:85%%;
 }
 
 .headFix {

@@ -5,7 +5,7 @@
 
 import fetch from 'isomorphic-fetch';
 import {requestChats,recieveChats,sampleAction} from './actions';
-import {API_UPDATE_MASKS, API_UPDATE_DISTINCT, API_INIT_STORE, API_UPDATE_FILE, API_UPDATE_FILES, API_UPDATE_NULLCOUNT, API_ADD_FILE, API_UPDATE_FREQ } from './asyncTypes';
+import {API_UPDATE_COLUMNS, API_UPDATE_MASKS, API_UPDATE_DISTINCT, API_INIT_STORE, API_UPDATE_FILE, API_UPDATE_FILES, API_UPDATE_NULLCOUNT, API_ADD_FILE, API_UPDATE_FREQ } from './asyncTypes';
 
 //let baseUrl = 'http://localhost:8080/';
 let baseUrl = location.origin+"/";
@@ -117,6 +117,15 @@ export function updateNullCount(gid, newCounts) {
 		gid: gid
 	};
 }
+
+export function updateColumns(gid, newColumns) {
+		return {
+			type: API_UPDATE_COLUMNS,
+			payload: newColumns,
+			gid: gid
+		};
+}
+
 export function updateDistinct(gid, newCounts) {
 	return {
 		type: API_UPDATE_DISTINCT,

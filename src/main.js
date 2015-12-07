@@ -11,7 +11,7 @@ import { Provider } from 'react-redux';
 import ChatContainer from './containers/ChatContainer';
 import LastMessageContainer from './containers/LastMessageContainer';
 
-import { updateMasks, updateDistinct, saveStore, saveFile, initializeStore, initializeFiles, fetchChats,updateFiles,updateNullCount,addFile,updateFreq } from './actions/asyncActions';
+import { updateMasks, updateColumns, updateDistinct, saveStore, saveFile, initializeStore, initializeFiles, fetchChats,updateFiles,updateNullCount,addFile,updateFreq } from './actions/asyncActions';
 import { selectFile } from './actions/actions';
 
 import { data } from '../server/stores/technical_md';
@@ -116,7 +116,7 @@ dropZone.addEventListener('drop', function(e) {
         var files = e.dataTransfer.files;
         var file = files[0];
 
-	var j = new ThreadedFileProcessor({file:file, threaded: false, chunkSize: 4096, logging: false, scriptFilesLocation: "../lib", 
+	var j = new ThreadedFileProcessor({file:file, threaded: false, ignoreFirstLine: true, chunkSize: 4096, logging: false, scriptFilesLocation: "../lib", 
 									metadata: {fileMetadata: {lineSeparator: "\n",fieldSeparator: ";", ignoreFields: true, stringQualifier: "\"", parser: "csv",stringQualifierEscape: "\"", treatAllAsStrings: true}
 																							
 											}
@@ -134,12 +134,15 @@ dropZone.addEventListener('drop', function(e) {
 	var updateInterval;
 	var updateFreqInterval;
 	var updateMaskInterval;
+	var columns ;
+	var flp = false;
+	var firstLine;
 	j.on("parsedLine", function(line) {
 		if(cnt == 0) {
 			//This part is just for demonstration. Create the file object here and save it to store
 			gid = Math.floor((Math.random() * 10000) + 1).toString();
 			
-			var columns = line.fields.map((field,index)=> {
+			columns = line.fields.map((field,index)=> {
 								return {
 									name: 'Field_'+index,
 									dataType: 'String',
@@ -203,6 +206,13 @@ dropZone.addEventListener('drop', function(e) {
 			},50);
 
 		}
+		if(flp) {
+			var newColumns = columns.map((column,id) => {
+			return Object.assign({},column, {name:firstLine.fields[id].value, label: firstLine.fields[id].value});
+			});
+			store.dispatch(updateColumns(gid,newColumns));
+			flp = false;
+		}
 		cnt++;
 		//nullObj = checkNulls(line.fields, nullObj);
 		NM.checkNulls(line.fields);
@@ -214,6 +224,10 @@ dropZone.addEventListener('drop', function(e) {
 		//store.dispatch(updateNullCount(gid,nullObj));
 
 	});	
+	j.on("firstLineProcessed", function(line) {
+		flp = true;
+		firstLine= line;
+	});
 	j.on('end', function() {
 		store.dispatch(updateNullCount(gid,NM.nullObject));
 		clearInterval(updateInterval);

@@ -3,10 +3,14 @@
  */
 
 import { combineReducers } from 'redux';
-import { API_UPDATE_MASKS, API_UPDATE_DISTINCT, API_UPDATE_FILE, API_UPDATE_NULLCOUNT, API_UPDATE_FREQ } from '../actions/asyncTypes';
+import { API_UPDATE_COLUMNS, API_UPDATE_MASKS, API_UPDATE_DISTINCT, API_UPDATE_FILE, API_UPDATE_NULLCOUNT, API_UPDATE_FREQ } from '../actions/asyncTypes';
 
 function technicalMetadata(state={info:{}, source:{}, columns: []}, action) {
 	switch(action.type) {
+		case API_UPDATE_COLUMNS:
+			if(state.info.gid !== 'undefined' && action.gid == state.info.gid) {
+				return Object.assign({},state,{columns: action.payload});
+			}
 		default:
 			return state;
 	}
@@ -24,6 +28,7 @@ function businessMetadata(state = {info: {}, elements:[]}, action) {
 							) 
 					});
 			}
+
 		case API_UPDATE_FREQ:
 			if(action.gid == state.gid) {
 				return Object.assign({},

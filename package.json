@@ -16,7 +16,7 @@
   "homepage": "http://www.ataccama.com/",
   "repository": {
     "type": "git",
-    "url": "tapeer-ekin.rhcloud.com/~/git/tapeer.git/"
+    "url": "https://github.com/EkinAthor/processingTest"
   },
 
   "engines": {
@@ -57,5 +57,8 @@
   "bundleDependencies": [],
 
   "private": true,
-  "main": "server.js"
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
 }

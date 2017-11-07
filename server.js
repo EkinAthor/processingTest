@@ -191,6 +191,7 @@ function saveFile(fileData, callback) {
 function findAll(callback) {
   MongoClient.connect(url, function(err, db) {
   var flz = [];
+  if(db != null) {
   var cursor =db.collection('files').find( );
    cursor.each(function(err, doc) {
       assert.equal(err, null);
@@ -201,6 +202,9 @@ function findAll(callback) {
          callback(flz);
       }
    });
+  } else {
+      callback(flz);
+  }
   });
 }
 

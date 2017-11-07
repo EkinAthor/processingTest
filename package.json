@@ -56,8 +56,8 @@
   },
   "bundleDependencies": [],
   "private": true,
-  "main": "serverv3.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node serverv3.js"
+    "start": "node server.js"
   }
 }

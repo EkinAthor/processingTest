@@ -66,6 +66,10 @@ app.get("/files", function(req, resp) {
     });
 });
 
+app.post("/file", function(req, resp) {
+    saveFile(req.body, function(result){resp.end();});
+});
+
 app.get('/', function (req, res) {
     // try to initialize the db on every request if it's not already
     // initialized.
@@ -131,6 +135,25 @@ function findAll(callback) {
     }
 
 }
+
+function saveFile(fileData, callback) {
+    if (!db) {
+        initDb(function(err){});
+    }
+    if(db) {
+        db.collection('files').insertOne(fileData, function (err, result) {
+            assert.equal(err, null);
+            console.log("Inserted");
+            db.close();
+            callback(result);
+        });
+    } else {
+        console.log("file not saved mongo not present");
+    }
+
+}
+
+
 
 app.listen(port, ip);
 console.log('Server running on http://%s:%s', ip, port);

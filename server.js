@@ -37,6 +37,7 @@ var SampleApp = function() {
 
     /**
      *  Set up server IP address and port # using env variables/defaults.
+     *  test
      */
     self.setupVariables = function() {
         //  Set the environment variables we need.

@@ -3,6 +3,8 @@ var express = require('express'),
     app     = express(),
     morgan  = require('morgan');
 var bodyParser = require('body-parser');
+var assert = require('assert');
+var ObjectId = require('mongodb').ObjectID;
 
 Object.assign=require('object-assign')
 

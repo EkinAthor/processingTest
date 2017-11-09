@@ -3,7 +3,7 @@ var express = require('express'),
     app     = express(),
     morgan  = require('morgan');
 var bodyParser = require('body-parser');
-var assert = require('assert');
+//var assert = require('assert');
 
 Object.assign=require('object-assign')
 

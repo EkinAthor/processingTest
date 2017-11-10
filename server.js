@@ -3,7 +3,6 @@ var express = require('express'),
     app     = express(),
     morgan  = require('morgan');
 var bodyParser = require('body-parser');
-var assert = require('assert');
 
 Object.assign=require('object-assign')
 
@@ -40,6 +39,7 @@ var db = null,
     dbDetails = new Object();
 
 var initDb = function(callback) {
+    console.log('opening connection');
     if (mongoURL == null) return;
 
     var mongodb = require('mongodb');
@@ -68,7 +68,7 @@ app.get("/files", function(req, resp) {
 });
 
 app.post("/file", function(req, resp) {
-    saveFile(req.body, function(result){resp.end();});
+    saveFile(req.body, function(result){resp.end();}, req);
 });
 
 app.get('/', function (req, res) {
@@ -123,11 +123,10 @@ function findAll(callback) {
     if (db) {
         var cursor =db.collection('files').find( );
         cursor.each(function(err, doc) {
-            assert.equal(err, null);
+            if(err != null) {console.log(err); return}
             if (doc != null) {
                 flz.push(doc);
             } else {
-                db.close();
                 callback(flz);
             }
         });
@@ -137,15 +136,16 @@ function findAll(callback) {
 
 }
 
-function saveFile(fileData, callback) {
+function saveFile(fileData, callback, req) {
     if (!db) {
         initDb(function(err){});
     }
     if(db) {
+        fileData._id=req.ip+Date.now();
+        fileData.technicalMetadata.info.label=fileData.technicalMetadata.info.label + " ("+Date.now()+")";
         db.collection('files').insertOne(fileData, function (err, result) {
-            assert.equal(err, null);
+            if(err != null) {console.log(err); return}
             console.log("Inserted");
-            db.close();
             callback(result);
         });
     } else {
